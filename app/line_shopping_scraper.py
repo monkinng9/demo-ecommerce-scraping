@@ -1,7 +1,7 @@
 import requests
 import os
 import json
-from datetime import datetime, timezone
+from datetime import datetime
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -169,7 +169,7 @@ def fetch_line_shopping_products(search_query: str, shops_page: int = 1, limit: 
         timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
         # Sanitize search_query for filename
         safe_search_query = "".join(c if c.isalnum() else "_" for c in search_query)
-        filename = os.path.join(DATA_DIR, f"line_{timestamp_str}_{safe_search_query}_{shops_page}.json")
+        filename = os.path.join(DATA_DIR, f"{timestamp_str}_line_shopping_{safe_search_query}_{shops_page}.json")
 
         # Save data to JSON file
         try:

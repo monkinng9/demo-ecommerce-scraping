@@ -86,7 +86,7 @@ def fetch_watsons_products(query: str, page_size: int = 200) -> dict | None:
         if page_num is None: # Handle cases where currentPage might be explicitly None
             page_num = 1
             
-        filename = os.path.join(data_dir, f"watson_{timestamp}_{store_name}_{page_num}.json")
+        filename = os.path.join(data_dir, f"{timestamp}_watson_{store_name}_{page_num}.json")
 
         # Save data to JSON file
         try:
