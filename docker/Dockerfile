@@ -64,9 +64,6 @@ RUN apt-get update && \
 
 USER airflow
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
 # Copy the application code and proxy tool
 COPY . /opt/airflow/app
 
@@ -97,9 +94,14 @@ RUN rm -rf /opt/browsermob-proxy-2.1.4 && \
     chown -R airflow /opt/browsermob-proxy-2.1.4 && \
     rm -rf /tmp/bmp
 
+
+
 # Switch back to airflow user for subsequent operations
 USER airflow
 
+COPY credentials.json .
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 # Command to run the script
 # This will run when the container starts
