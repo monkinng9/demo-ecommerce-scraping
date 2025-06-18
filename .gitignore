@@ -2,3 +2,8 @@
 curl_line.md
 .env
 data
+watson_bear_token.txt
+*.log
+.venv
+logs/*
+airflow.cfg

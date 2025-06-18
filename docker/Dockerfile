@@ -36,7 +36,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Use a specific version of Airflow with Python 3.9 for reproducibility
-FROM apache/airflow:latest-python3.9
+FROM apache/airflow:3.0.2-python3.10
 
 # Set the working directory in the container
 WORKDIR /opt/airflow
