@@ -16,12 +16,18 @@ if not os.path.exists(proxy_path):
 
 # Start the BrowserMob proxy server
 server = Server(proxy_path, options={'port': 9092})
-server.start(options={'timeout': 30})
+server.start(options={'timeout': 15})
 authorization_token = None
 max_retries = 3
 final_driver_to_quit = None # Will hold the driver from a successful attempt or the last one if all fail
+user_data_dir_for_cleanup = None # Variable to hold the path for cleanup
 
 try:
+    # Create a temporary directory for Chrome's user data for this run
+    # This path will be used by all attempts in this script execution
+    current_run_user_data_dir = tempfile.mkdtemp()
+    user_data_dir_for_cleanup = current_run_user_data_dir # Ensure it's set for cleanup
+
     for attempt in range(max_retries):
         print(f"Attempt {attempt + 1} of {max_retries} to find Authorization token...")
         current_proxy_client = None
@@ -39,6 +45,8 @@ try:
             chrome_options.add_argument("--headless")
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
+            # Add the unique user data directory argument
+            chrome_options.add_argument(f"--user-data-dir={current_run_user_data_dir}")
             chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
             chrome_options.add_argument("--window-size=1920,1080")
 
@@ -117,6 +125,11 @@ finally:
     if final_driver_to_quit:
         print("Quitting the final WebDriver instance.")
         final_driver_to_quit.quit()
+    
+    # Cleanup the temporary user data directory
+    if user_data_dir_for_cleanup and os.path.exists(user_data_dir_for_cleanup):
+        print(f"Cleaning up user data directory: {user_data_dir_for_cleanup}")
+        shutil.rmtree(user_data_dir_for_cleanup, ignore_errors=True)
     
     if 'server' in locals() and server: # Check if server object exists and was assigned
         print("Stopping BrowserMob proxy server...")
