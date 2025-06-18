@@ -1,0 +1,4 @@
+*.pkl
+curl_line.md
+.env
+data
