@@ -68,7 +68,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application code and proxy tool
-COPY app/ ./app
+COPY . /opt/airflow/app
 
 USER root
 RUN chown -R airflow /opt/airflow/app && chmod -R u+w /opt/airflow/app
@@ -85,16 +85,16 @@ RUN mkdir -p /tmp/bmp && \
 
 # Switch to root to move files into /opt/airflow/app, set permissions, and clean up
 USER root
-RUN rm -rf /opt/airflow/app/browsermob-proxy-2.1.4 && \
-    mkdir -p /opt/airflow/app/browsermob-proxy-2.1.4 && \
+RUN rm -rf /opt/browsermob-proxy-2.1.4 && \
+    mkdir -p /opt/browsermob-proxy-2.1.4 && \
     # Check if the unzipped directory exists before moving
     if [ -d /tmp/bmp/browsermob-proxy-2.1.4 ]; then \
-        mv /tmp/bmp/browsermob-proxy-2.1.4/* /opt/airflow/app/browsermob-proxy-2.1.4/ ; \
+        mv /tmp/bmp/browsermob-proxy-2.1.4/* /opt/browsermob-proxy-2.1.4/ ; \
     else \
         echo "Error: Expected directory /tmp/bmp/browsermob-proxy-2.1.4 not found after unzip." ; \
         exit 1 ; \
     fi && \
-    chown -R airflow /opt/airflow/app/browsermob-proxy-2.1.4 && \
+    chown -R airflow /opt/browsermob-proxy-2.1.4 && \
     rm -rf /tmp/bmp
 
 # Switch back to airflow user for subsequent operations
