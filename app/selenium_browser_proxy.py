@@ -11,11 +11,12 @@ from browsermobproxy import Server
 # --- Path Configuration ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # Project root is one level up from the script's directory (app/)
-PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..'))
+# Project root is two levels up from the script's directory (app/app/)
+PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
 
 
 # Define the path to the browsermob-proxy executable
-proxy_path = os.path.join(PROJECT_ROOT, 'browsermob-proxy-2.1.4', 'bin', 'browsermob-proxy')
+proxy_path = os.path.join(PROJECT_ROOT, '..', 'browsermob-proxy-2.1.4', 'bin', 'browsermob-proxy')
 
 if not os.path.exists(proxy_path):
     raise FileNotFoundError(f"BrowserMob Proxy not found at: {proxy_path}")

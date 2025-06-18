@@ -16,7 +16,7 @@ DATA_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'data'))
 # Ensure the data directory exists, create if not
 os.makedirs(DATA_DIR, exist_ok=True)
 
-def fetch_watsons_products(query: str, page_size: int = 200) -> Optional[dict]:
+def fetch_watsons_products(query: str, page: int = 0, page_size: int = 200) -> Optional[dict]:
     """
     Fetches product data from the Watsons API based on a search query.
 
@@ -34,6 +34,7 @@ def fetch_watsons_products(query: str, page_size: int = 200) -> Optional[dict]:
         "fields": "FULL",
         "query": query,
         "pageSize": page_size,
+        "currentPage": page,
         "sort": "mostRelevant",
         "useDefaultSearch": "false",
         "brandRedirect": "true",
@@ -86,11 +87,7 @@ def fetch_watsons_products(query: str, page_size: int = 200) -> Optional[dict]:
         # Generate filename
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         store_name = query
-        # Attempt to get page number from response, default to 1 if not found
-        page_num = response_data.get("pagination", {}).get("currentPage", 1)
-        if page_num is None: # Handle cases where currentPage might be explicitly None
-            page_num = 1
-            
+        page_num = response_data.get("pagination", {}).get("currentPage", 0)
         filename = os.path.join(DATA_DIR, f"{timestamp}_watson_{store_name}_{page_num}.json")
 
         # Save data to JSON file
@@ -116,20 +113,17 @@ if __name__ == "__main__":
     search_queries = ["vistra", "blackmores", "dettol", "swisse", "eucerin"]
     for query in search_queries:
         print(f"\nFetching data for query: '{query}'")
-        product_data = fetch_watsons_products(query)
+        # Fetch the first page to get pagination details
+        initial_data = fetch_watsons_products(query, page=0)
 
-        if product_data:
-            # Example: Print the number of products found
-            if 'products' in product_data and isinstance(product_data['products'], list):
-                print(f"Found {len(product_data['products'])} products for '{query}'.")
-            elif 'results' in product_data and isinstance(product_data['results'], list): # Alternative key for products
-                print(f"Found {len(product_data['results'])} products for '{query}'.")
-            else:
-                # Check for pagination totalResults for a count if products list is not directly available
-                total_results = product_data.get("pagination", {}).get("totalResults", 0)
-                if total_results > 0:
-                    print(f"Found {total_results} products for '{query}' (based on pagination total). ")
-                else:
-                    print(f"Could not determine the number of products for '{query}' from common keys.")
+        if initial_data and 'pagination' in initial_data:
+            total_pages = initial_data.get('pagination', {}).get('totalPages', 1)
+            print(f"Found {initial_data.get('pagination', {}).get('totalResults', 0)} results across {total_pages} pages for '{query}'.")
+
+            # Loop through the rest of the pages if there are more than one
+            if total_pages > 1:
+                for page_num in range(1, total_pages):
+                    print(f"--- Fetching page {page_num + 1} of {total_pages} for '{query}' ---")
+                    fetch_watsons_products(query, page=page_num)
         else:
-            print(f"Failed to fetch data for '{query}'.")
+            print(f"Failed to fetch initial data or pagination info for '{query}'.")
