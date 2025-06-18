@@ -1,7 +1,3 @@
-import json
-import polars as pl
-import re
-
 # This script parses a JSON file to extract product information into a Polars DataFrame.
 # It handles nested JSON structures, missing data, and cleans the data before final output.
 
