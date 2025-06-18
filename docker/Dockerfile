@@ -1,3 +1,28 @@
+# Dockerfile for the e_commerce_scrap project
+# ---------------------------------------------
+# This Dockerfile sets up an environment for running web scraping tasks.
+# It includes:
+#   - Python 3.9 (via apache/airflow base image)
+#   - OpenJDK 8 (for BrowserMob Proxy)
+#   - Chromium and ChromeDriver (for Selenium)
+#   - BrowserMob Proxy (for capturing network traffic)
+#   - Python dependencies specified in requirements.txt
+#
+# Build command (run from the project root directory):
+#   docker build -t e_commerce_scrap -f docker/Dockerfile .
+#
+# Stages:
+#   1. jdk_builder: Builds OpenJDK 8 from an Ubuntu base.
+#   2. Main image: Based on apache/airflow, installs system dependencies,
+#      copies OpenJDK 8 from the builder stage, installs Python packages,
+#      downloads and sets up BrowserMob Proxy, and copies the application code.
+#
+# Key Environment Variables:
+#   - JAVA_HOME: Set to the OpenJDK 8 installation path.
+#
+# Default User: airflow (though root is used for installations)
+# ---------------------------------------------
+
 # run on root dir: docker build -t e_commerce_scrap -f docker/Dockerfile .
 
 # Stage 1: Build OpenJDK 8 from Ubuntu
