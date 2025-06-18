@@ -1,15 +1,22 @@
 import requests
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timezone
+from typing import Optional
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
 
-DATA_DIR = "data"
+# --- Path Configuration ---
+# Get the absolute path of the directory where the script is located
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Construct the path to the 'data' directory (assuming it's one level up from SCRIPT_DIR)
+DATA_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'data'))
+# Ensure the data directory exists, create if not
+os.makedirs(DATA_DIR, exist_ok=True)
 
-def fetch_line_shopping_products(search_query: str, shops_page: int = 1, limit: int = 200) -> dict | None:
+def fetch_line_shopping_products(search_query: str, shops_page: int = 1, limit: int = 200) -> Optional[dict]:
     """
     Fetches product and shop data from the Line Shopping API based on a search query.
 
@@ -19,7 +26,7 @@ def fetch_line_shopping_products(search_query: str, shops_page: int = 1, limit: 
         limit (int): The number of items to retrieve per page for products/shops.
 
     Returns:
-        dict | None: A dictionary containing the API response (JSON) if successful,
+        Optional[dict]: A dictionary containing the API response (JSON) if successful,
                      otherwise None.
     """
     url = "https://customer-api.line-apps.com/search/graph"
@@ -161,9 +168,6 @@ def fetch_line_shopping_products(search_query: str, shops_page: int = 1, limit: 
         response_data['ingest_timestamp_utc'] = datetime.now(timezone.utc).isoformat()
         response_data['ecommerce_name'] = "line_shopping"
 
-        # Create data directory if it doesn't exist
-        if not os.path.exists(DATA_DIR):
-            os.makedirs(DATA_DIR)
 
         # Generate filename
         timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")

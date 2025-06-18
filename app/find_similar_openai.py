@@ -9,6 +9,14 @@ from tqdm import tqdm
 import concurrent.futures
 import time
 
+# --- Path Configuration ---
+# Get the absolute path of the directory where the script is located
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Construct the path to the 'data' directory (assuming it's one level up from SCRIPT_DIR, meaning 'data' is a sibling of the 'app' directory)
+DATA_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'data'))
+# Ensure the data directory exists, create if not (especially for output files)
+os.makedirs(DATA_DIR, exist_ok=True)
+
 # --- 1. SETUP AND HELPER FUNCTIONS ---
 
 # Initialize OpenAI client
@@ -60,11 +68,11 @@ def embedding_from_string(string: str, embedding_cache=embedding_cache) -> list:
 # --- 2. DATA LOADING AND CONTEXT PREPARATION ---
 
 # Load the context dataset (our product catalog to search within)
-context_dataset_path = "../data/watson_eucerin_products.csv"
+context_dataset_path = os.path.join(DATA_DIR, "watson_eucerin_products.csv")
 df_context = pl.read_csv(context_dataset_path)
 
 # Load the query dataset (the products we want to find matches for)
-query_dataset_path = "../data/line_eucerin_products.csv"
+query_dataset_path = os.path.join(DATA_DIR, "line_eucerin_products.csv")
 df_query = pl.read_csv(query_dataset_path)
 
 print("Preparing context by generating embeddings for all Watson's products...")
@@ -242,7 +250,7 @@ print(filtered_df_results)
 # --- 5. SAVE RESULTS TO EXCEL ---
 
 # Define the output Excel file path
-output_excel_file = '../data/product_eucerin_comparisons.xlsx'
+output_excel_file = os.path.join(DATA_DIR, "product_eucerin_comparisons.xlsx")
 
 # Write the DataFrame to an Excel file
 try:

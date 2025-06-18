@@ -3,11 +3,20 @@ import os
 from dotenv import load_dotenv
 import json
 from datetime import datetime, timezone
+from typing import Optional
 
 # Load environment variables from .env file
 load_dotenv()
 
-def fetch_watsons_products(query: str, page_size: int = 200) -> dict | None:
+# --- Path Configuration ---
+# Get the absolute path of the directory where the script is located
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Construct the path to the 'data' directory (assuming it's one level up from SCRIPT_DIR)
+DATA_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'data'))
+# Ensure the data directory exists, create if not
+os.makedirs(DATA_DIR, exist_ok=True)
+
+def fetch_watsons_products(query: str, page_size: int = 200) -> Optional[dict]:
     """
     Fetches product data from the Watsons API based on a search query.
 
@@ -16,7 +25,7 @@ def fetch_watsons_products(query: str, page_size: int = 200) -> dict | None:
         page_size (int): The number of products to retrieve per page.
 
     Returns:
-        dict | None: A dictionary containing the API response (JSON) if successful,
+        Optional[dict]: A dictionary containing the API response (JSON) if successful,
                      otherwise None.
     """
     base_url = "https://api.watsons.co.th/api/v2/wtcth/products/search"
@@ -42,7 +51,7 @@ def fetch_watsons_products(query: str, page_size: int = 200) -> dict | None:
     headers = {
         'accept': 'application/json, text/plain, */*',
         'accept-language': 'en-US,en;q=0.7',
-        'authorization': f'bearer {bearer_token}',
+        'authorization': f'{bearer_token}',
         'cache-control': 'no-cache, no-store, must-revalidate, post-check=0, pre-check=0',
         'expires': '0',
         'origin': 'https://www.watsons.co.th',
@@ -73,10 +82,6 @@ def fetch_watsons_products(query: str, page_size: int = 200) -> dict | None:
         response_data['ingest_timestamp_utc'] = datetime.now(timezone.utc).isoformat()
         response_data['ecommerce_name'] = "watsons"
 
-        # Create data directory if it doesn't exist
-        data_dir = "data"
-        if not os.path.exists(data_dir):
-            os.makedirs(data_dir)
 
         # Generate filename
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -86,7 +91,7 @@ def fetch_watsons_products(query: str, page_size: int = 200) -> dict | None:
         if page_num is None: # Handle cases where currentPage might be explicitly None
             page_num = 1
             
-        filename = os.path.join(data_dir, f"{timestamp}_watson_{store_name}_{page_num}.json")
+        filename = os.path.join(DATA_DIR, f"{timestamp}_watson_{store_name}_{page_num}.json")
 
         # Save data to JSON file
         try:

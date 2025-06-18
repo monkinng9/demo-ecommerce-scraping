@@ -1,8 +1,8 @@
-dspy-ai
-google-generativeai
 python-dotenv # For potentially loading .env files if you choose to use them
+selenium
+webdriver-manager
 polars
 requests
-transformers
-torch
 openpyxl
+browsermob-proxy
+ipython

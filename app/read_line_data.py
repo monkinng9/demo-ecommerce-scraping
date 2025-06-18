@@ -1,5 +1,8 @@
 # This script parses a JSON file to extract product information into a Polars DataFrame.
 # It handles nested JSON structures, missing data, and cleans the data before final output.
+import os
+import json # Assuming json is used within parse_product_data, ensure it's imported if not already
+import polars as pl # Assuming polars is used, ensure it's imported if not already
 
 def parse_product_data(json_file_path: str) -> pl.DataFrame:
     """
@@ -70,14 +73,19 @@ def parse_product_data(json_file_path: str) -> pl.DataFrame:
     return df
 
 if __name__ == "__main__":
+    # --- Path Configuration ---
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    DATA_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'data'))
+    os.makedirs(DATA_DIR, exist_ok=True) # Ensure data directory exists
+
     # Path to the JSON file
-    json_file = '../data/line_eucerin.json'
+    json_file = os.path.join(DATA_DIR, 'line_eucerin.json')
 
     # Get the final DataFrame
     product_df = parse_product_data(json_file)
 
     # Define the output CSV file path
-    output_csv_file = '../data/line_eucerin_products.csv'
+    output_csv_file = os.path.join(DATA_DIR, 'line_eucerin_products.csv')
 
     # Write the DataFrame to a CSV file
     try:

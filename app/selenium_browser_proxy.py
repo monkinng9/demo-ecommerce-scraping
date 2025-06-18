@@ -1,15 +1,21 @@
 # !pip install browsermob-proxy selenium
 import os
 import json
+
 import time
 import tempfile
 import shutil
 from selenium import webdriver
 from browsermobproxy import Server
 
+# --- Path Configuration ---
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Project root is one level up from the script's directory (app/)
+PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..'))
+
 
 # Define the path to the browsermob-proxy executable
-proxy_path = 'app/browsermob-proxy-2.1.4/bin/browsermob-proxy'
+proxy_path = os.path.join(PROJECT_ROOT, 'browsermob-proxy-2.1.4', 'bin', 'browsermob-proxy')
 
 if not os.path.exists(proxy_path):
     raise FileNotFoundError(f"BrowserMob Proxy not found at: {proxy_path}")
@@ -113,10 +119,35 @@ try:
     # After the loop, report the final status
     if authorization_token:
         print(f"\nSuccessfully retrieved Authorization Token: {authorization_token}")
-        # Save the authorization token to a text file
-        with open("watson_bear_token.txt", "w") as token_file:
-            token_file.write(authorization_token)
-        print("Authorization Token saved to watson_bear_token.txt")
+        os.environ["WATSONS_BEARER_TOKEN"] = authorization_token
+        print("Set 'WATSONS_BEARER_TOKEN' in environment for current session.")
+
+        # Save/update the authorization token in .env file
+        dotenv_path = os.path.join(PROJECT_ROOT, '.env')
+
+        lines = []
+        if os.path.exists(dotenv_path):
+            with open(dotenv_path, 'r') as f:
+                lines = f.readlines()
+
+        key_to_set = "WATSONS_BEARER_TOKEN"
+        new_line = f'{key_to_set}="{authorization_token}"\n'
+        key_found = False
+        for i, line in enumerate(lines):
+            if line.strip().startswith(f"{key_to_set}="):
+                lines[i] = new_line
+                key_found = True
+                break
+        
+        if not key_found:
+            lines.append(new_line)
+
+        try:
+            with open(dotenv_path, 'w') as f:
+                f.writelines(lines)
+            print(f"Updated 'WATSONS_BEARER_TOKEN' in {dotenv_path}")
+        except IOError as e:
+            print(f"Error writing to {dotenv_path}: {e}")
     else:
         print("\nFailed to retrieve Authorization token after all attempts.")
 
