@@ -13,7 +13,7 @@ from extract_data.watson_data_scraper import fetch_watsons_products
 from extract_data.line_shopping_scraper import fetch_line_shopping_products
 from data_processing.process_pre_landing_line_data import process_pre_landing_line_data
 from data_processing.process_pre_landing_watson_data import process_pre_landing_watson_data
-from dags.data_processing.write_compare_price_report import main as write_compare_price_report
+from data_processing.write_compare_price_report import create_comparison_report_and_upload
 
 
 @task(task_id="get_and_update_token")
@@ -82,7 +82,7 @@ def process_watson_data_task():
 @task(task_id='write_compare_price_report')
 def write_compare_price_report_task():
     """Writes the price comparison report."""
-    write_compare_price_report()
+    create_comparison_report_and_upload()
 
 
 with DAG(
