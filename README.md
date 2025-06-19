@@ -89,7 +89,7 @@ The services and the ports you can access:
 
 ### 2. Prepare Configuration
 
-Once all services are ready, please create a **bucket** named `data-pipeline-demo`. Afterward, upload the `ecommerce_product_comparisons_final.csv` file to the `data-pipeline-demo/cache` path within that **bucket**.
+Once all services are ready, please create a **bucket** named `data-pipeline-demo` in Minio. Afterward, upload the `ecommerce_product_comparisons_final.csv` file to the `data-pipeline-demo/cache` path within that **bucket**.
 
 For Airflow, navigate to Variables, then import `airflow_variables.json` and adjust the values for actual use.
 
