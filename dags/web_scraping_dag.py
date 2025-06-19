@@ -89,7 +89,7 @@ with DAG(
     dag_id="web_scraping_dag",
     start_date=pendulum.datetime(2023, 1, 1, tz="UTC"),
     catchup=False,
-    schedule=None,  # This makes it a manually triggered DAG
+    schedule='0 1 * * *',  # Run daily at 1 AM
     tags=["extraction", "watsons", "line_shopping", "reporting"],
     doc_md="""
     ### E-commerce Product Price Comparison DAG
@@ -101,7 +101,7 @@ with DAG(
     4.  **Process Data**: Processes the raw data from both sources.
     5.  **Generate Report**: Creates a price comparison report from the processed data.
 
-    **Trigger:** Manual
+    **Trigger:** Daily at 1 AM
     """
 ) as dag:
     get_and_update_token = get_token_and_update_variable()
