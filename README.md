@@ -57,9 +57,11 @@ graph LR
 
 ## Quick Start
 
-### 1. Prepare Environment
+## 0. Pre Request
+- Config File [Google Drive](https://drive.google.com/drive/folders/1ciyLMz9SO_A4WQVr7GG5Y1DptbaAjz3G?usp=sharing)
+- Report Folder [Google Drive](https://drive.google.com/drive/folders/1EXRnLYXXxjc46nBcJ8DYKjEhv5zd-xfE?usp=sharing)
 
-[Google Drive](https://drive.google.com/drive/folders/1ciyLMz9SO_A4WQVr7GG5Y1DptbaAjz3G?usp=sharing)
+### 1. Prepare Environment
 
 Please download the necessary config files from Google Drive and place them in the root directory of your project. The files you need are:
 - `google_service_account.json`
