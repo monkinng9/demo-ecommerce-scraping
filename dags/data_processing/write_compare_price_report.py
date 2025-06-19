@@ -26,7 +26,7 @@ def authenticate_google_drive():
         NameError: If the global `SCOPES` variable is not defined.
         google.auth.exceptions.DefaultCredentialsError: If the service account file is invalid or lacks permissions.
     """
-    SERVICE_ACCOUNT_FILE = Variable.get("google_service_account_json_path", default_var='/opt/airflow/private_key.json')
+    SERVICE_ACCOUNT_FILE = Variable.get("google_service_account_json_path", default_var='/opt/airflow/google_service_account.json')
     try:
         creds = ServiceAccountCredentials.from_service_account_file(
             SERVICE_ACCOUNT_FILE, scopes=SCOPES)
@@ -219,7 +219,7 @@ def create_comparison_report_and_upload(**kwargs):
         watson_base_names_to_join = watson_base_name_df.rename({"base_product_name_from_watson": "product_name"})
 
         line_matching_df = (
-            line_processed_df.sort("ingest_timestamp_utc", descending=True)
+            line_processed_df.sort(["ingest_timestamp_utc", "sale_price"], descending=[True, False])
             .unique(subset=["product_name"], keep="first", maintain_order=False)
             .join(line_base_names_to_join, on="product_name", how="inner")
         )
@@ -234,14 +234,14 @@ def create_comparison_report_and_upload(**kwargs):
         print(f"Watsons - Matched with base names count: {watson_matching_df.height}")
 
         comparison_df = (
-            line_matching_df.select(
+            watson_matching_df.select(
                 pl.col("product_no"),
                 pl.col("product_name"),
                 pl.col("sale_price").alias("price_from_line"),
                 pl.col("ingest_timestamp_utc")
             )
             .join(
-                watson_matching_df.select(
+                line_matching_df.select(
                     pl.col("product_no"),
                     pl.col("sale_price").alias("price_from_watson")
                 ),
