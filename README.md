@@ -57,7 +57,7 @@ graph LR
 
 ## Quick Start
 
-## 0. Pre Requirement
+## 0. Prerequisite
 - Config File [Google Drive](https://drive.google.com/drive/folders/1ciyLMz9SO_A4WQVr7GG5Y1DptbaAjz3G?usp=sharing)
 - Report Folder [Google Drive](https://drive.google.com/drive/folders/1EXRnLYXXxjc46nBcJ8DYKjEhv5zd-xfE?usp=sharing)
 
