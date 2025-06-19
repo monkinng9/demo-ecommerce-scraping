@@ -11,3 +11,5 @@ __init__
 __pycache__
 google_service_account.json
 airflow_variables.json
+embeddings_cache.pkl
+ecommerce_product_comparisons_final.csv
