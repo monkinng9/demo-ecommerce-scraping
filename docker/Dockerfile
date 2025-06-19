@@ -100,6 +100,7 @@ RUN rm -rf /opt/browsermob-proxy-2.1.4 && \
 USER airflow
 
 COPY credentials.json .
+COPY private_key.json .
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
