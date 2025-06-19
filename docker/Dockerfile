@@ -99,8 +99,7 @@ RUN rm -rf /opt/browsermob-proxy-2.1.4 && \
 # Switch back to airflow user for subsequent operations
 USER airflow
 
-COPY credentials.json .
-COPY private_key.json .
+COPY google_service_account.json .
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
