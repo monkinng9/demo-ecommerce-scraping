@@ -71,7 +71,7 @@ Please download the necessary config files from Google Drive and place them in t
 First, you'll need to **build the Docker image** for your project. From the root directory of your project, use the following command:
 
 ```bash
-docker build -t e_commerce_scrap .
+docker build -t e_commerce_scrap -f docker/Dockerfile .
 ```
 
 Once the image is built, you can then **bring up your Docker Compose services** in detached mode (meaning they'll run in the background):
