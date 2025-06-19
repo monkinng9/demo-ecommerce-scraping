@@ -2,7 +2,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
 # Replace with the path to your service account key file
-SERVICE_ACCOUNT_FILE = '/opt/airflow/private_key.json'
+SERVICE_ACCOUNT_FILE = '/opt/airflow/google_service_account.json'
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
 # Your personal Google account email address
