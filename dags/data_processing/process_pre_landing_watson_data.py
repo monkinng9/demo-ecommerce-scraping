@@ -4,7 +4,7 @@ import re
 import json
 import s3fs
 from airflow.models import Variable
-from deltalake import write_deltalake
+from deltalake import write_deltalake, DeltaTable
 
 def process_pre_landing_watson_data():
     """
@@ -143,6 +143,17 @@ def process_pre_landing_watson_data():
         "AWS_REGION": "us-east-1"  # Optional: Can be a dummy value if not applicable but sometimes helps
     }
 
+    table_exists = False
+    try:
+        print(f"Checking if Delta table exists at: {target_path}")
+        # Attempt to load the table to check for existence
+        DeltaTable(target_path, storage_options=delta_lake_storage_options)
+        table_exists = True
+        print(f"Delta table already exists at {target_path}.")
+    except Exception:  # Broad exception catch, as specific error for non-existence can vary
+        print(f"Delta table does not exist at {target_path} or failed to load. It will be created.")
+        table_exists = False
+
     try:
         print(f"Writing data to Delta table at: {target_path}")
         arrow_table = df.to_arrow()
@@ -150,12 +161,19 @@ def process_pre_landing_watson_data():
             target_path,
             arrow_table,
             storage_options=delta_lake_storage_options,
-            partition_by=["year", "month"], # Kept original partitioning for Watson data
-            mode="append"  # or "overwrite" if you want to replace existing data
+            partition_by=["year", "month"],
+            mode="append"  # Creates if not exists, appends if exists
         )
         print("Successfully wrote data to Delta table.")
+
+        if not table_exists:
+            print(f"Performing Z-order optimization on newly created table: {target_path} for column 'ingest_timestamp_utc'")
+            dt = DeltaTable(target_path, storage_options=delta_lake_storage_options)
+            dt.optimize.z_order(["ingest_timestamp_utc"])
+            print("Successfully optimized Delta table with Z-order.")
+        
     except Exception as e:
-        print(f"Failed to write DataFrame to Delta Lake. Error: {e}")
+        print(f"Failed during Delta Lake write or optimization. Error: {e}")
 
 
 if __name__ == "__main__":
