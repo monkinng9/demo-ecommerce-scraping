@@ -28,6 +28,7 @@ from tqdm import tqdm
 import concurrent.futures
 import time
 import os
+import boto3
 
 
 # --- Configuration ---
@@ -319,7 +320,7 @@ print(filtered_df_results)
 # --- 5. SAVE RESULTS TO EXCEL ---
 
 # Define the output Excel file path
-output_excel_file = "product_eucerin_comparisons.xlsx"
+output_excel_file = "ecommerce_product_comparisons.xlsx"
 
 # Write the DataFrame to an Excel file
 try:
@@ -327,3 +328,45 @@ try:
     print(f"\nComparison results successfully written to {output_excel_file}")
 except Exception as e:
     print(f"Error writing comparison results to Excel: {e}")
+
+# --- 6. UPLOAD RESULTS TO MINIO ---
+if os.path.exists(output_excel_file):
+    try:
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=minio_access_key,
+            aws_secret_access_key=minio_secret_key,
+            endpoint_url=minio_endpoint,
+            config=boto3.session.Config(signature_version='s3v4')
+        )
+        minio_bucket_name = 'data-pipeline-demo'
+        minio_object_name = f'cache/{output_excel_file}'
+        s3_client.upload_file(output_excel_file, minio_bucket_name, minio_object_name)
+        print(f"Successfully uploaded {output_excel_file} to MinIO bucket '{minio_bucket_name}' as '{minio_object_name}'")
+    except Exception as e:
+        print(f"Error uploading {output_excel_file} to MinIO: {e}")
+else:
+    print(f"Excel file {output_excel_file} not found. Skipping MinIO upload.")
+
+# --- 7. CLEANUP LOCAL FILES ---
+print("\nCleaning up local files...")
+# Remove the embeddings cache file
+embedding_cache_file_to_remove = "embeddings_cache.pkl"
+try:
+    if os.path.exists(embedding_cache_file_to_remove):
+        os.remove(embedding_cache_file_to_remove)
+        print(f"Successfully removed local cache file: {embedding_cache_file_to_remove}")
+    else:
+        print(f"Local cache file not found, skipping removal: {embedding_cache_file_to_remove}")
+except Exception as e:
+    print(f"Error removing local cache file {embedding_cache_file_to_remove}: {e}")
+
+# Remove the local Excel file (if it exists and after potential upload)
+try:
+    if os.path.exists(output_excel_file):
+        os.remove(output_excel_file)
+        print(f"Successfully removed local Excel file: {output_excel_file}")
+    else:
+        print(f"Local Excel file not found, skipping removal: {output_excel_file}")
+except Exception as e:
+    print(f"Error removing local Excel file {output_excel_file}: {e}")
