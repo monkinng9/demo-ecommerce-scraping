@@ -7,3 +7,7 @@ watson_bear_token.txt
 .venv
 logs/*
 airflow.cfg
+__init__
+__pycache__
+credentials.json
+private_key.json
