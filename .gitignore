@@ -9,5 +9,5 @@ logs/*
 airflow.cfg
 __init__
 __pycache__
-credentials.json
-private_key.json
+google_service_account.json
+airflow_variables.json
