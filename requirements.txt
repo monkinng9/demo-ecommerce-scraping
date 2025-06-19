@@ -6,3 +6,11 @@ requests
 openpyxl
 browsermob-proxy
 ipython
+boto3
+deltalake
+s3fs
+openai
+tqdm
+google-api-python-client 
+google-auth-httplib2 
+google-auth-oauthlib
