@@ -136,8 +136,32 @@ print(f"base prepared. {len(base_embeddings_np)} product embeddings are loaded.\
 
 
 # --- 3. CORE MATCHING LOGIC ---
+def find_best_match_in_context(query_name, context_embeddings_np, top_n=3):
+    """
+    Finds the top N most similar products in the context catalog for a given query name.
 
+    Args:
+        query_name (str): The name of the product to query.
+        context_embeddings_np (numpy.ndarray): NumPy array of embeddings for products in the context.
+        top_n (int): The number of top similar products to return.
 
+    Returns:
+        tuple: A tuple containing:
+               - top_n_indices (numpy.ndarray): Indices of the top N most similar products in the context.
+               - top_n_similarities (numpy.ndarray): Cosine similarity scores for the top N products.
+    """
+    # Generate embedding for the query name
+    query_embedding = embedding_from_string(query_name)
+
+    # Calculate cosine similarity between the query embedding and all context embeddings
+    similarities = np.dot(context_embeddings_np, query_embedding) / \
+                   (np.linalg.norm(context_embeddings_np, axis=1) * np.linalg.norm(query_embedding))
+
+    # Get the indices of the top N most similar products
+    top_n_indices = np.argsort(similarities)[::-1][:top_n]
+    top_n_similarities = similarities[top_n_indices]
+
+    return top_n_indices, top_n_similarities
 
 def verify_products_similarity(base_product, product_list_to_compare):
     """
