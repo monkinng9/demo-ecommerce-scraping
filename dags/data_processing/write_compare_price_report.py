@@ -237,13 +237,13 @@ def create_comparison_report_and_upload(**kwargs):
             watson_matching_df.select(
                 pl.col("product_no"),
                 pl.col("product_name"),
-                pl.col("sale_price").alias("price_from_line"),
+                pl.col("sale_price").alias("price_from_watson"),
                 pl.col("ingest_timestamp_utc")
             )
             .join(
                 line_matching_df.select(
                     pl.col("product_no"),
-                    pl.col("sale_price").alias("price_from_watson")
+                    pl.col("sale_price").alias("price_from_line")
                 ),
                 on="product_no",
                 how="inner"
