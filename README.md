@@ -1,18 +1,7 @@
-# Programming and Data Orchestration Exam (3 Days)
 
-## Instructions
+# E-commerce Product Comparison and Scraping Project
 
-1.  You are required to write code in any programming language of your choice to perform web scraping on at least 2 e-commerce websites.
-2.  The objective is to crawl product data from these websites and compare prices for 100 products or more.
-3.  Utilize any data orchestration platform such as Dagster, Airflow, or others to manage and schedule your data processing workflow.
-4.  The output should be in the form of an Excel spreadsheet (xlsx).
-5.  Automate the process to upload the output to Google Drive daily.
-    a.  Please attach service account credential in git project
-    b.  Please shared uploaded folder to apisit.hen@ascendcorp.com
-6.  Implement the solution as a Docker container.
-7.  Upload your code to github, gitlab or others and attach link in email
-
----
+This project focuses on scraping product information from selected e-commerce websites, transforming the data, and generating comparison reports. It leverages various modern data tools and practices to ensure efficient and scalable data processing.
 
 ## Scope
 - **Select 2 E-commerce Websites:**
@@ -29,7 +18,7 @@
 	- Delta Lake format for structured data management.
 	- Minio for data storage.
 	- Google Drive for report uploads.
-	- text-embedding-3-small and gpt-4.1-nano for identifying product names with similar meanings.
+	- text-embedding-3-small and GPT-4o-mini for identifying product names with similar meanings.
 	- Selenium and Browser Proxy for scraping product information from websites.
 	- Airflow for workflow management.
 	- Docker for containerization.

@@ -178,7 +178,6 @@ def verify_products_similarity(base_product, product_list_to_compare):
     if not product_list_to_compare:
         return None, False
 
-    # Construct the prompt for GPT-4o-mini
     product_list_str = "\n".join([f"- {p}" for p in product_list_to_compare])
     prompt = f"""Given the base product: '{base_product}', is any of the following products the same product? If yes, return the exact name of the product from the list. If no, return 'None'.\n\nProduct List:\n{product_list_str}\n\nExact Product Name or 'None':"""
 
